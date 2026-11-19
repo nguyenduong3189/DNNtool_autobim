@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DNN-TOOL - Giải pháp tối ưu Revit</title>
     
-    <!-- Thêm icon nhỏ trên tab trình duyệt (Favicon) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -99,12 +99,12 @@
         .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         .logo span { color: var(--primary); }
         
-        /* CSS MỚI CHO ẢNH LOGO */
+        /* ẢNH LOGO HEADER */
         .logo-img {
             width: 36px;
             height: 36px;
             object-fit: contain;
-            border-radius: 8px; /* Bo góc nhẹ, nếu ảnh đã trong suốt và vuông vắn thì vẫn đẹp */
+            border-radius: 8px; 
         }
 
         nav { display: flex; gap: 8px; align-items: center; }
@@ -345,11 +345,58 @@
 
         /* Footer */
         footer { padding: 40px 0; border-top: 1px solid var(--border); }
-        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .footer-left { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
-        .footer-right { display: flex; gap: 20px; }
-        .footer-right a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s ease; }
-        .footer-right a:hover { color: var(--primary-light); }
+        
+        .footer-content { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+        }
+        
+        .footer-left { 
+            flex: 1; 
+            color: var(--text-muted); 
+            font-size: 14px; 
+            line-height: 1.6; 
+        }
+        
+        /* Cột giữa chứa logo */
+        .footer-center {
+            flex: 1;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+        }
+        
+        .footer-logo {
+            max-height: 50px; /* Chỉnh chiều cao logo cho vừa vặn */
+            width: auto;
+            object-fit: contain;
+            opacity: 0.85; 
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-logo:hover {
+            opacity: 1;
+        }
+
+        .footer-right { 
+            flex: 1;
+            display: flex; 
+            gap: 20px; 
+            justify-content: flex-end; 
+        }
+        
+        .footer-right a { 
+            color: var(--text-muted); 
+            text-decoration: none; 
+            font-size: 14px; 
+            transition: color 0.2s ease; 
+        }
+        .footer-right a:hover { 
+            color: var(--primary-light); 
+        }
 
         /* Responsive */
         @media (max-width: 900px) {
@@ -363,7 +410,15 @@
             .section-header h2 { font-size: 30px; }
             .cta-box { padding: 40px 24px; }
             .cta-box h2 { font-size: 28px; }
-            .footer-content { flex-direction: column; text-align: center; }
+            
+            /* Mobile Footer */
+            .footer-content { 
+                flex-direction: column; 
+                text-align: center; 
+            }
+            .footer-right {
+                justify-content: center; 
+            }
         }
     </style>
 </head>
@@ -375,7 +430,7 @@
     <div class="container">
         <header>
             <div class="logo">
-                <!-- ẢNH LOGO MỚI TẠI ĐÂY -->
+                <!-- ẢNH LOGO HEADER -->
                 <img src="logo.png" alt="DNN-Tool Logo" class="logo-img">
                 DNN<span>_TOOL</span>
             </div>
@@ -531,10 +586,18 @@
     <footer id="contact">
         <div class="container">
             <div class="footer-content">
+                <!-- Cột Trái: Thông tin tác giả -->
                 <div class="footer-left">
                     <div>© 2024 DNN-TOOL. Phát triển & chỉnh sửa bởi <strong style="color: var(--primary-light);">Atb_DuongNguyen</strong>.</div>
                     <div style="margin-top: 6px; font-size: 13.5px;">Email: <span style="color: var(--text-main);">nguyenduong.3189@gmail.com</span></div>
                 </div>
+                
+                <!-- Cột Giữa: Logo mới -->
+                <div class="footer-center">
+                    <img src="logo2.png" alt="Logo Thương Hiệu" class="footer-logo">
+                </div>
+
+                <!-- Cột Phải: Mạng xã hội -->
                 <div class="footer-right">
                     <a href="https://www.facebook.com/nguyen.duong.199" target="_blank" rel="noopener noreferrer">Facebook</a>
                     <a href="https://www.youtube.com/@dnguyennee" target="_blank" rel="noopener noreferrer">YouTube</a>
