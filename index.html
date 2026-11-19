@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNN-TOOL - Giải pháp tối ưu Revit</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Bảng màu Dark Mode chuyên nghiệp */
+        :root {
+            --bg-base: #0b0f19;       /* Nền chính (Đen xanh thẫm) */
+            --bg-surface: #151b2b;    /* Nền các khối (Xanh đen) */
+            --primary: #f59e0b;       /* Vàng cam (Amber) */
+            --primary-glow: rgba(245, 158, 11, 0.15);
+            --text-main: #f8fafc;     /* Trắng sáng */
+            --text-muted: #94a3b8;    /* Xám xanh */
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hiệu ứng ánh sáng nền (Background Glow) */
+        .bg-glow {
+            position: absolute;
+            top: -20vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vw;
+            height: 60vh;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header / Navbar */
+        header {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: var(--bg-base);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 80px;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 24px;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 90%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-download {
+            background-color: var(--primary);
+            color: var(--bg-base);
+            text-decoration: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-download:hover {
+            background-color: #d97706; /* Vàng đậm hơn */
+            transform: translateY(-2px);
+        }
+
+        .version {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-visual {
+            flex: 1;
+            position: relative;
+        }
+
+        /* Ảnh minh họa dạng khối lập phương nổi */
+        .hero-visual img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+            background-color: var(--bg-surface);
+            display: block;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 32px;
+            border-radius: 16px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-glow);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 60px 0;
+            }
+            .hero-content p {
+                margin: 0 auto 40px;
+            }
+            .btn-group {
+                justify-content: center;
+            }
+            .version {
+                justify-content: center;
+            }
+            .hero-content h1 {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ánh sáng nền -->
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">D</div>
+                DNN<span>_TOOL</span>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <span class="badge">Revit API Add-in</span>
+                <h1>Tối ưu hóa <br>quy trình Revit.</h1>
+                <p>Bộ công cụ tự động hóa dựng hình, quản lý Dimension và kiểm soát lỗi mô hình dành riêng cho Kỹ sư và Kiến trúc sư.</p>
+                
+                <div class="btn-group">
+                    <!-- Thay link tải file thực tế vào đây -->
+                    <a href="link_tai_file_cua_ban.zip" class="btn-download" download>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Tải xuống phiên bản 1.0.8
+                    </a>
+                </div>
+                <div class="version">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    Tương thích Revit 2024. Đóng Revit trước khi cài đặt.
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <!-- Thay ảnh chụp màn hình tool của bạn vào đây -->
+                <img src="https://via.placeholder.com/800x500/151b2b/f59e0b?text=DNN-TOOL+Interface" alt="DNN Tool Interface">
+            </div>
+        </section>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Trang bị mọi thứ bạn cần</h2>
+                <p>Từ những thao tác nhỏ nhất đến việc quản lý dữ liệu phức tạp, DNN-TOOL giúp bạn hoàn thành công việc nhanh gấp 3 lần.</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">📐</div>
+                    <h3>Dim Check Lệch Trục</h3>
+                    <p>Quét toàn bộ cấu kiện, đo khoảng cách tới Grid và phát hiện lỗi lệch milimet với bảng dữ liệu trực quan.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Dựng hình từ CAD</h3>
+                    <p>Dựng nhanh Tường, Dầm, Sàn từ CAD Link. Tự động ngắt tường tại vị trí dầm/cột giao cắt chính xác.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔗</div>
+                    <h3>Quản lý Join</h3>
+                    <p>Thiết lập rule Join / Disallow Join hàng loạt cho toàn bộ dự án. Tự động ngắt kết nối khi vẽ.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Kiểm tra & Báo cáo</h3>
+                    <p>Liệt kê toàn bộ Warnings, tìm Grid trùng lặp và xuất báo cáo chi tiết ra file Excel/CSV nhanh chóng.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 DNN-TOOL. Phát triển bởi [Tên Của Bạn].</p>
+        </div>
+    </footer>
+
+</body>
+</html>
