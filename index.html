@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DNN-TOOL - Giải pháp tối ưu Revit</title>
+    <meta name="description" content="DNN-TOOL: bộ công cụ Revit API tự động hóa dựng hình, quản lý Dimension và kiểm soát lỗi mô hình cho Kỹ sư và Kiến trúc sư.">
+    <meta property="og:title" content="DNN-TOOL - Beyond Modeling">
+    <meta property="og:description" content="Automate Smarter. Engineer Better. Add-in Revit cho Kỹ sư và Kiến trúc sư.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="logo.png">
     
     <!-- Favicon (Trên tab trình duyệt): Dùng file logoweb.png theo đúng ý bạn -->
     <link rel="icon" type="image/png" href="logoweb.png">
@@ -98,6 +103,9 @@
         }
         .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
         .logo span { color: var(--primary); }
+        .logo-slogan { display: flex; flex-direction: column; justify-content: center; line-height: 1.25; }
+        .logo-slogan .slogan-main { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; color: var(--primary); }
+        .logo-slogan .slogan-sub { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.3px; margin-top: 2px; }
         
         /* ĐÃ CẬP NHẬT: Tăng kích thước Logo Header */
         .logo-img {
@@ -422,6 +430,38 @@
                 justify-content: center; 
             }
         }
+
+        /* ===== NÂNG CẤP GIAO DIỆN ===== */
+        html { scroll-padding-top: 90px; }
+        .mock-menu { padding: 9px 12px; border-radius: 8px; font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
+        .mock-menu.active { background: var(--primary); color: #fff; }
+        .mock-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .mock-kpi { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+        .mock-kpi b { display: block; font-size: 18px; color: #fff; }
+        .mock-kpi span { font-size: 10.5px; color: var(--text-muted); }
+        .mock-kpi.ok b { color: #34d399; }
+        .mock-kpi.warn b { color: #fbbf24; }
+        .mock-rows { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; font-size: 11.5px; }
+        .mock-r { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; padding: 7px 10px; border-top: 1px solid var(--border); color: #cbd5e1; align-items: center; }
+        .mock-r.head { border-top: 0; background: rgba(255,255,255,0.04); color: var(--text-muted); font-weight: 600; }
+        .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10.5px; font-weight: 600; width: fit-content; }
+        .pill.ok { color: #34d399; background: rgba(52,211,153,0.12); }
+        .pill.bad { color: #fbbf24; background: rgba(251,191,36,0.12); }
+        .mock-cap { font-size: 10.5px; color: var(--text-muted); text-align: right; }
+        .card.soon { border-style: dashed; background: transparent; }
+        .section-pad { padding: 90px 0; }
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+        .step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+        .step-num { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-glow); border: 1px solid var(--border-strong); color: var(--primary-light); font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+        .step h3 { font-size: 18px; margin-bottom: 8px; }
+        .step p { color: var(--text-muted); font-size: 14.5px; line-height: 1.6; }
+        .faq { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .faq details { border: 1px solid var(--border); border-radius: 12px; background: var(--bg-surface); padding: 18px 22px; }
+        .faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: "+"; color: var(--primary-light); font-size: 20px; line-height: 1; }
+        .faq details[open] summary::after { content: "\2013"; }
+        .faq details p { margin-top: 12px; color: var(--text-muted); font-size: 14.5px; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -434,10 +474,16 @@
             <div class="logo">
                 <!-- ĐÃ SỬA: Gọi file logo.png cho Header -->
                 <img src="logo.png" alt="DNN-Tool Logo" class="logo-img">
-                DNN<span>_TOOL</span>
+                <!-- ĐÃ SỬA: Thay chữ DNN_TOOL bằng 2 câu khẩu hiệu -->
+                <div class="logo-slogan">
+                    <span class="slogan-main">BEYOND MODELING.</span>
+                    <span class="slogan-sub">Automate Smarter. Engineer Better.</span>
+                </div>
             </div>
             <nav>
                 <a href="#features">Tính năng</a>
+                <a href="#guide">Cài đặt</a>
+                <a href="#faq">FAQ</a>
                 <a href="#download">Tải xuống</a>
                 <a href="#contact">Liên hệ</a>
                 <a href="#download" class="header-cta">Dùng thử ngay</a>
@@ -485,28 +531,24 @@
                     </div>
                     <div class="window-body">
                         <div class="mock-sidebar">
-                            <div class="mock-item active"></div>
-                            <div class="mock-item"></div>
-                            <div class="mock-item short"></div>
-                            <div class="mock-item"></div>
-                            <div class="mock-item large"></div>
+                            <div class="mock-menu active">Dim Check</div>
+                            <div class="mock-menu">Dựng từ CAD</div>
+                            <div class="mock-menu">Quản lý Join</div>
+                            <div class="mock-menu">Báo cáo</div>
                         </div>
                         <div class="mock-main">
-                            <div class="mock-row">
-                                <div class="mock-box accent"></div>
-                                <div class="mock-box"></div>
+                            <div class="mock-kpis">
+                                <div class="mock-kpi"><b>128</b><span>Cấu kiện quét</span></div>
+                                <div class="mock-kpi ok"><b>121</b><span>Đạt</span></div>
+                                <div class="mock-kpi warn"><b>7</b><span>Lệch trục</span></div>
                             </div>
-                            <div class="mock-row">
-                                <div class="mock-box"></div>
-                                <div class="mock-box"></div>
-                                <div class="mock-box"></div>
+                            <div class="mock-rows">
+                                <div class="mock-r head"><span>Cấu kiện</span><span>Dim (mm)</span><span>Trạng thái</span></div>
+                                <div class="mock-r"><span>Dầm B12</span><span>3000</span><span class="pill ok">Đạt</span></div>
+                                <div class="mock-r"><span>Cột C05</span><span>4502</span><span class="pill bad">Lệch</span></div>
+                                <div class="mock-r"><span>Tường W21</span><span>1500</span><span class="pill ok">Đạt</span></div>
                             </div>
-                            <div class="mock-table">
-                                <div class="mock-line"></div>
-                                <div class="mock-line"></div>
-                                <div class="mock-line"></div>
-                                <div class="mock-line"></div>
-                            </div>
+                            <div class="mock-cap">Hình minh họa giao diện</div>
                         </div>
                     </div>
                 </div>
@@ -516,20 +558,20 @@
         <!-- Stats -->
         <section class="stats">
             <div class="stat">
-                <div class="stat-value">3x</div>
-                <div class="stat-label">Tăng tốc dựng hình</div>
+                <div class="stat-value">Revit 2024</div>
+                <div class="stat-label">Phiên bản tương thích</div>
             </div>
             <div class="stat">
-                <div class="stat-value">20+</div>
-                <div class="stat-label">Tính năng tự động</div>
+                <div class="stat-value">4</div>
+                <div class="stat-label">Nhóm tính năng chính</div>
             </div>
             <div class="stat">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">Miễn phí cập nhật</div>
+                <div class="stat-value">Excel · CSV</div>
+                <div class="stat-label">Xuất báo cáo dữ liệu</div>
             </div>
             <div class="stat">
-                <div class="stat-value">24/7</div>
-                <div class="stat-label">Hỗ trợ kỹ thuật</div>
+                <div class="stat-value">Miễn phí</div>
+                <div class="stat-label">Sử dụng & cập nhật</div>
             </div>
         </section>
     </div>
@@ -540,7 +582,7 @@
             <div class="section-header">
                 <div class="section-tag">Tính năng</div>
                 <h2>Trang bị mọi thứ bạn cần</h2>
-                <p>Từ những thao tác nhỏ nhất đến việc quản lý dữ liệu phức tạp, DNN-TOOL giúp bạn hoàn thành công việc nhanh gấp 3 lần.</p>
+                <p>Từ những thao tác nhỏ nhất đến việc quản lý dữ liệu phức tạp, DNN-TOOL giúp bạn tiết kiệm thời gian và giảm sai sót.</p>
             </div>
 
             <div class="grid">
@@ -564,6 +606,48 @@
                     <h3>Kiểm tra & Báo cáo</h3>
                     <p>Liệt kê toàn bộ Warnings, tìm Grid trùng lặp và xuất báo cáo chi tiết ra file Excel/CSV nhanh chóng.</p>
                 </div>
+                <div class="card">
+                    <div class="card-icon">📏</div>
+                    <h3>Auto Dim vào Grid</h3>
+                    <p>Tự động ghi kích thước Dầm, Tường, Cột tới Grid gần nhất và xuất danh sách Dim (ID, giá trị mm) ra Excel/CSV.</p>
+                </div>
+                <div class="card soon">
+                    <div class="card-icon">🚀</div>
+                    <h3>Đang phát triển thêm</h3>
+                    <p>Nhiều tính năng mới đang được xây dựng. Bạn cần công cụ gì cho quy trình của mình? Hãy góp ý qua email ở cuối trang.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hướng dẫn cài đặt -->
+    <section class="section-pad" id="guide">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">Cài đặt</div>
+                <h2>Bắt đầu chỉ với 3 bước</h2>
+                <p>Đóng Revit trước khi cài đặt để add-in được nạp đúng cách.</p>
+            </div>
+            <div class="steps">
+                <div class="step"><div class="step-num">1</div><h3>Tải về &amp; giải nén</h3><p>Tải file .zip của DNN-TOOL và giải nén ra một thư mục trên máy.</p></div>
+                <div class="step"><div class="step-num">2</div><h3>Đóng Revit &amp; cài đặt</h3><p>Đóng hoàn toàn Revit, sau đó cài đặt theo hướng dẫn đi kèm trong gói tải về.</p></div>
+                <div class="step"><div class="step-num">3</div><h3>Mở Revit &amp; sử dụng</h3><p>Mở Revit 2024, tìm công cụ DNN-TOOL trên thanh Ribbon và bắt đầu với Dim Check.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-pad" id="faq" style="padding-top:0;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-tag">FAQ</div>
+                <h2>Câu hỏi thường gặp</h2>
+            </div>
+            <div class="faq">
+                <details><summary>DNN-TOOL có mất phí không?</summary><p>Hiện tại DNN-TOOL được cung cấp miễn phí, bao gồm cả các bản cập nhật.</p></details>
+                <details><summary>Hỗ trợ phiên bản Revit nào?</summary><p>Phiên bản v1.0.8 tương thích Revit 2024. Thông tin về các phiên bản khác sẽ được cập nhật tại trang này.</p></details>
+                <details><summary>Báo cáo xuất ra định dạng nào?</summary><p>Kết quả kiểm tra và dữ liệu Dimension có thể xuất ra file Excel hoặc CSV.</p></details>
+                <details><summary>Gặp lỗi hoặc muốn góp ý thì liên hệ ở đâu?</summary><p>Bạn gửi email tới nguyenduong.3189@gmail.com hoặc nhắn qua Facebook/YouTube ở cuối trang.</p></details>
             </div>
         </div>
     </section>
@@ -590,7 +674,7 @@
             <div class="footer-content">
                 <!-- Cột Trái: Thông tin tác giả -->
                 <div class="footer-left">
-                    <div>© 2024 DNN-TOOL. Phát triển & chỉnh sửa bởi <strong style="color: var(--primary-light);">Atb_DuongNguyen</strong>.</div>
+                    <div>© <span id="year">2026</span> DNN-TOOL. Phát triển & chỉnh sửa bởi <strong style="color: var(--primary-light);">Atb_DuongNguyen</strong>.</div>
                     <div style="margin-top: 6px; font-size: 13.5px;">Email: <span style="color: var(--text-main);">nguyenduong.3189@gmail.com</span></div>
                 </div>
                 
@@ -603,11 +687,20 @@
                 <div class="footer-right">
                     <a href="https://www.facebook.com/nguyen.duong.199" target="_blank" rel="noopener noreferrer">Facebook</a>
                     <a href="https://www.youtube.com/@dnguyennee" target="_blank" rel="noopener noreferrer">YouTube</a>
-                    <a href="#">Tài liệu</a>
+                    <a href="#guide">Hướng dẫn</a>
                 </div>
             </div>
         </div>
     </footer>
 
+<script>
+        // Dán link tải thật vào đây. Khi để trống, nút tải sẽ hiển thị "Sắp phát hành".
+        const DOWNLOAD_URL = "";
+        document.querySelectorAll('.btn-download').forEach(function (b) {
+            if (DOWNLOAD_URL) { b.href = DOWNLOAD_URL; }
+            else { b.removeAttribute('download'); b.href = '#contact'; b.lastChild.textContent = ' Sắp phát hành'; }
+        });
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
