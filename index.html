@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DNN-TOOL - Giải pháp tối ưu Revit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Reset CSS */
         * {
             margin: 0;
             padding: 0;
@@ -13,16 +15,23 @@
             font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Bảng màu Dark Mode chuyên nghiệp */
+        /* BẢNG MÀU: XANH DƯƠNG + TRẮNG */
         :root {
-            --bg-base: #0b0f19;       /* Nền chính (Đen xanh thẫm) */
-            --bg-surface: #151b2b;    /* Nền các khối (Xanh đen) */
-            --primary: #f59e0b;       /* Vàng cam (Amber) */
-            --primary-glow: rgba(245, 158, 11, 0.15);
-            --text-main: #f8fafc;     /* Trắng sáng */
-            --text-muted: #94a3b8;    /* Xám xanh */
+            --bg-base: #0b1120;          
+            --bg-surface: #111827;       
+            --bg-elevated: #1e293b;      
+            --primary: #3b82f6;          
+            --primary-light: #60a5fa;    
+            --primary-dark: #2563eb;     
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --primary-glow-strong: rgba(59, 130, 246, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
             --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(59, 130, 246, 0.4);
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
             background-color: var(--bg-base);
@@ -31,292 +40,441 @@
             overflow-x: hidden;
         }
 
-        /* Hiệu ứng ánh sáng nền (Background Glow) */
+        /* Hiệu ứng nền */
         .bg-glow {
-            position: absolute;
-            top: -20vh;
-            left: 50%;
+            position: fixed;
+            top: -20vh; left: 50%;
             transform: translateX(-50%);
-            width: 80vw;
-            height: 60vh;
+            width: 80vw; height: 60vh;
             background: radial-gradient(circle, var(--primary-glow) 0%, transparent 60%);
-            z-index: -1;
-            pointer-events: none;
+            z-index: -2; pointer-events: none;
+        }
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
+            z-index: -1; pointer-events: none;
         }
 
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-        /* Header / Navbar */
+        /* Animation */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .animate-in { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Header */
         header {
-            padding: 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 20px 0;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border);
+            position: sticky; top: 0;
+            background: rgba(11, 17, 32, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 100;
         }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .logo span {
-            color: var(--primary);
-        }
-
+        .logo { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--primary); }
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
-            color: var(--bg-base);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            color: #fff; border-radius: 9px;
+            display: flex; justify-content: center; align-items: center;
             font-weight: 900;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
-
-        /* Hero Section */
-        .hero {
-            padding: 100px 0 80px;
-            display: flex;
-            align-items: center;
-            gap: 60px;
-        }
-
-        .hero-content {
-            flex: 1;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--primary);
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .hero-content h1 {
-            font-size: 56px;
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            margin-bottom: 24px;
-        }
-
-        .hero-content p {
-            font-size: 18px;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            max-width: 90%;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .btn-download {
-            background-color: var(--primary);
-            color: var(--bg-base);
-            text-decoration: none;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+        nav { display: flex; gap: 8px; align-items: center; }
+        nav a {
+            color: var(--text-muted); text-decoration: none;
+            font-size: 14px; font-weight: 500;
+            padding: 8px 14px; border-radius: 8px;
             transition: all 0.2s ease;
         }
+        nav a:hover { color: var(--text-main); background: var(--bg-surface); }
+        .header-cta {
+            background: #fff; color: var(--bg-base) !important;
+            font-weight: 700 !important; padding: 9px 18px !important;
+            box-shadow: 0 4px 14px rgba(255,255,255,0.1);
+        }
+        .header-cta:hover { background: #e2e8f0 !important; }
 
+        /* Hero */
+        .hero {
+            padding: 90px 0 80px;
+            display: flex; align-items: center; gap: 60px;
+            position: relative;
+        }
+        .hero-content { flex: 1; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 16px; background: var(--bg-surface);
+            border: 1px solid var(--border); border-radius: 20px;
+            color: var(--primary-light); font-size: 13px; font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .badge-dot {
+            width: 7px; height: 7px; background: var(--primary);
+            border-radius: 50%; box-shadow: 0 0 10px var(--primary);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        .hero-content h1 {
+            font-size: 58px; font-weight: 800; line-height: 1.08;
+            letter-spacing: -1.5px; margin-bottom: 24px;
+        }
+        .hero-content h1 .gradient {
+            background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-content p {
+            font-size: 18px; color: var(--text-muted);
+            margin-bottom: 36px; max-width: 90%;
+        }
+        .btn-group { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+        .btn-download {
+            background: #fff; color: var(--bg-base);
+            text-decoration: none; padding: 16px 32px;
+            font-size: 16px; font-weight: 700; border-radius: 10px;
+            display: inline-flex; align-items: center; gap: 10px;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(255,255,255,0.1);
+        }
         .btn-download:hover {
-            background-color: #d97706; /* Vàng đậm hơn */
-            transform: translateY(-2px);
+            background: #e2e8f0;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255,255,255,0.15);
         }
-
+        .btn-secondary {
+            background: transparent; color: var(--text-main);
+            text-decoration: none; padding: 16px 28px;
+            font-size: 15px; font-weight: 600; border-radius: 10px;
+            border: 1px solid var(--border);
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: all 0.25s ease;
+        }
+        .btn-secondary:hover { border-color: var(--border-strong); background: var(--bg-surface); }
         .version {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 13px; color: var(--text-muted);
+            margin-top: 20px; display: flex; align-items: center; gap: 6px;
         }
 
+        /* KHU VỰC MOCKUP BÊN PHẢI */
         .hero-visual {
             flex: 1;
             position: relative;
-        }
-
-        /* Ảnh minh họa dạng khối lập phương nổi */
-        .hero-visual img {
-            width: 100%;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.4);
-            background-color: var(--bg-surface);
-            display: block;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 80px 0;
-            border-top: 1px solid var(--border);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-header h2 {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 16px;
-        }
-
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 16px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-        }
-
-        .card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border);
-            padding: 32px;
-            border-radius: 16px;
-            transition: border-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-4px);
-        }
-
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--primary-glow);
-            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            margin-bottom: 24px;
-            color: var(--primary);
         }
 
-        .card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .app-window {
+            width: 100%;
+            max-width: 540px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
         }
 
-        .card p {
+        .window-header {
+            background: #0f172a;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .window-dots {
+            display: flex; gap: 6px;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+        
+        .window-title {
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 12px;
             color: var(--text-muted);
-            font-size: 15px;
-            line-height: 1.7;
+            font-weight: 500;
         }
+
+        .window-body {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            background: #111827;
+        }
+
+        .mock-sidebar {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .mock-item {
+            height: 8px; background: var(--border); border-radius: 4px;
+            width: 80%;
+        }
+        .mock-item.short { width: 60%; }
+        .mock-item.active { background: var(--primary); width: 90%; }
+        .mock-item.large { height: 60px; width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); margin-top: 10px; }
+
+        .mock-main {
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .mock-row {
+            display: flex; gap: 10px;
+        }
+        .mock-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            flex: 1;
+            height: 40px;
+        }
+        .mock-box.accent { border-color: var(--border-strong); background: var(--primary-glow); }
+        .mock-table {
+            display: flex; flex-direction: column; gap: 6px; margin-top: 10px;
+        }
+        .mock-line {
+            height: 6px; background: var(--border); border-radius: 3px;
+        }
+        .mock-line:nth-child(1) { width: 100%; }
+        .mock-line:nth-child(2) { width: 85%; }
+        .mock-line:nth-child(3) { width: 95%; }
+        .mock-line:nth-child(4) { width: 70%; }
+
+        /* Stats */
+        .stats {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 32px; font-weight: 800; color: var(--primary-light); }
+        .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+
+        /* Features */
+        .features { padding: 90px 0; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-tag {
+            display: inline-block; color: var(--primary-light);
+            font-size: 13px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 14px;
+        }
+        .section-header h2 {
+            font-size: 40px; font-weight: 800;
+            letter-spacing: -1px; margin-bottom: 16px;
+        }
+        .section-header p { color: var(--text-muted); font-size: 16px; max-width: 600px; margin: 0 auto; }
+        
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(17, 24, 39, 0.5) 100%);
+            border: 1px solid var(--border); padding: 32px;
+            border-radius: 16px; transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--border-strong); transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .card:hover::before { opacity: 1; }
+        .card-icon {
+            width: 52px; height: 52px;
+            background: var(--primary-glow); border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px; display: flex; justify-content: center; align-items: center;
+            font-size: 24px; margin-bottom: 22px; color: var(--primary-light);
+            transition: all 0.3s ease;
+        }
+        .card:hover .card-icon { background: var(--primary-glow-strong); transform: scale(1.05); }
+        .card h3 { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+        .card p { color: var(--text-muted); font-size: 14.5px; line-height: 1.7; }
+
+        /* CTA */
+        .cta-section { padding: 80px 0; }
+        .cta-box {
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 60px 40px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .cta-box::before {
+            content: ''; position: absolute; top: -50%; left: 50%;
+            transform: translateX(-50%); width: 60%; height: 100%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-box h2 { font-size: 36px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; position: relative; }
+        .cta-box p { color: var(--text-muted); font-size: 16px; margin-bottom: 32px; position: relative; }
+        .cta-box .btn-group { justify-content: center; position: relative; }
 
         /* Footer */
-        footer {
-            padding: 40px 0;
-            text-align: center;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 14px;
-        }
+        footer { padding: 40px 0; border-top: 1px solid var(--border); }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .footer-left { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+        .footer-right { display: flex; gap: 20px; }
+        .footer-right a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s ease; }
+        .footer-right a:hover { color: var(--primary-light); }
 
         /* Responsive */
         @media (max-width: 900px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 60px 0;
-            }
-            .hero-content p {
-                margin: 0 auto 40px;
-            }
-            .btn-group {
-                justify-content: center;
-            }
-            .version {
-                justify-content: center;
-            }
-            .hero-content h1 {
-                font-size: 40px;
-            }
+            .hero { flex-direction: column; text-align: center; padding: 60px 0; }
+            .hero-content p { margin: 0 auto 36px; }
+            .btn-group { justify-content: center; }
+            .version { justify-content: center; }
+            .hero-content h1 { font-size: 40px; }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 32px 20px; }
+            nav { display: none; }
+            .section-header h2 { font-size: 30px; }
+            .cta-box { padding: 40px 24px; }
+            .cta-box h2 { font-size: 28px; }
+            .footer-content { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Ánh sáng nền -->
     <div class="bg-glow"></div>
+    <div class="bg-grid"></div>
 
     <div class="container">
-        <!-- Header -->
         <header>
             <div class="logo">
                 <div class="logo-icon">D</div>
                 DNN<span>_TOOL</span>
             </div>
+            <nav>
+                <a href="#features">Tính năng</a>
+                <a href="#download">Tải xuống</a>
+                <a href="#contact">Liên hệ</a>
+                <a href="#download" class="header-cta">Dùng thử ngay</a>
+            </nav>
         </header>
 
-        <!-- Hero Section -->
+        <!-- Hero -->
         <section class="hero">
             <div class="hero-content">
-                <span class="badge">Revit API Add-in</span>
-                <h1>Tối ưu hóa <br>quy trình Revit.</h1>
-                <p>Bộ công cụ tự động hóa dựng hình, quản lý Dimension và kiểm soát lỗi mô hình dành riêng cho Kỹ sư và Kiến trúc sư.</p>
-                
-                <div class="btn-group">
-                    <!-- Thay link tải file thực tế vào đây -->
+                <span class="badge animate-in">
+                    <span class="badge-dot"></span>
+                    Revit API Add-in · v1.0.8
+                </span>
+                <h1 class="animate-in delay-1">
+                    Tối ưu hóa <br><span class="gradient">quy trình Revit.</span>
+                </h1>
+                <p class="animate-in delay-2">Bộ công cụ tự động hóa dựng hình, quản lý Dimension và kiểm soát lỗi mô hình dành riêng cho Kỹ sư và Kiến trúc sư.</p>
+
+                <div class="btn-group animate-in delay-3">
                     <a href="link_tai_file_cua_ban.zip" class="btn-download" download>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        Tải xuống phiên bản 1.0.8
+                        Tải xuống v1.0.8
+                    </a>
+                    <a href="#features" class="btn-secondary">
+                        Xem tính năng
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                 </div>
-                <div class="version">
+                <div class="version animate-in delay-4">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                     Tương thích Revit 2024. Đóng Revit trước khi cài đặt.
                 </div>
             </div>
 
-            <div class="hero-visual">
-                <!-- Thay ảnh chụp màn hình tool của bạn vào đây -->
-                <img src="https://via.placeholder.com/800x500/151b2b/f59e0b?text=DNN-TOOL+Interface" alt="DNN Tool Interface">
+            <!-- MOCKUP GIAO DIỆN PHẦN MỀM -->
+            <div class="hero-visual animate-in delay-2">
+                <div class="app-window">
+                    <div class="window-header">
+                        <div class="window-dots">
+                            <div class="dot dot-red"></div>
+                            <div class="dot dot-yellow"></div>
+                            <div class="dot dot-green"></div>
+                        </div>
+                        <div class="window-title">DNN-TOOL - Revit Automation Dashboard</div>
+                    </div>
+                    <div class="window-body">
+                        <div class="mock-sidebar">
+                            <div class="mock-item active"></div>
+                            <div class="mock-item"></div>
+                            <div class="mock-item short"></div>
+                            <div class="mock-item"></div>
+                            <div class="mock-item large"></div>
+                        </div>
+                        <div class="mock-main">
+                            <div class="mock-row">
+                                <div class="mock-box accent"></div>
+                                <div class="mock-box"></div>
+                            </div>
+                            <div class="mock-row">
+                                <div class="mock-box"></div>
+                                <div class="mock-box"></div>
+                                <div class="mock-box"></div>
+                            </div>
+                            <div class="mock-table">
+                                <div class="mock-line"></div>
+                                <div class="mock-line"></div>
+                                <div class="mock-line"></div>
+                                <div class="mock-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats">
+            <div class="stat">
+                <div class="stat-value">3x</div>
+                <div class="stat-label">Tăng tốc dựng hình</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">20+</div>
+                <div class="stat-label">Tính năng tự động</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Miễn phí cập nhật</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">Hỗ trợ kỹ thuật</div>
             </div>
         </section>
     </div>
 
-    <!-- Features Section -->
-    <div class="features">
+    <!-- Features -->
+    <section class="features" id="features">
         <div class="container">
             <div class="section-header">
+                <div class="section-tag">Tính năng</div>
                 <h2>Trang bị mọi thứ bạn cần</h2>
                 <p>Từ những thao tác nhỏ nhất đến việc quản lý dữ liệu phức tạp, DNN-TOOL giúp bạn hoàn thành công việc nhanh gấp 3 lần.</p>
             </div>
@@ -344,11 +502,38 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <footer>
+    <!-- CTA -->
+    <section class="cta-section" id="download">
         <div class="container">
-            <p>© 2024 DNN-TOOL. Phát triển bởi [Tên Của Bạn].</p>
+            <div class="cta-box">
+                <h2>Sẵn sàng tăng tốc Revit?</h2>
+                <p>Tải xuống miễn phí và trải nghiệm ngay hôm nay. Không cần thẻ tín dụng.</p>
+                <div class="btn-group">
+                    <a href="link_tai_file_cua_ban.zip" class="btn-download" download>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Tải xuống ngay
+                    </a>
+                    <a href="#contact" class="btn-secondary">Liên hệ hỗ trợ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div>© 2024 DNN-TOOL. Phát triển & chỉnh sửa bởi <strong style="color: var(--primary-light);">Atb_DuongNguyen</strong>.</div>
+                    <div style="margin-top: 6px; font-size: 13.5px;">Email: <span style="color: var(--text-main);">nguyenduong.3189@gmail.com</span></div>
+                </div>
+                <div class="footer-right">
+                    <a href="https://www.facebook.com/nguyen.duong.199" target="_blank" rel="noopener noreferrer">Facebook</a>
+                    <a href="https://www.youtube.com/@dnguyennee" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    <a href="#">Tài liệu</a>
+                </div>
+            </div>
         </div>
     </footer>
 
